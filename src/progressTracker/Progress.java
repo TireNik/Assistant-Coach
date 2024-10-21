@@ -1,4 +1,4 @@
-package workoutPlanModule;
+package progressTracker;
 
 public class Progress {
     private boolean result;

@@ -1,20 +1,23 @@
 package exerciseModule;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Exercise {
-   private String name;
-   private Exercise type;
-   private Double weight;
-   private String reps;
-   private String sets;
+    private String name;
+    private ExerciseType type;
+    private List<Set> sets;  // Список подходов (вес + повторения)
 
-    public Exercise(String name, Exercise type, Double weight, String reps, String sets) {
+    public Exercise(String name, ExerciseType type) {
         this.name = name;
         this.type = type;
-        this.weight = weight;
-        this.reps = reps;
-        this.sets = sets;
+        this.sets = new ArrayList<>();
+    }
+
+    // Добавление подхода в упражнение
+    public void addSet(double weight, String reps) {
+        sets.add(new Set(weight, reps));
     }
 
     public String getName() {
@@ -25,35 +28,19 @@ public class Exercise {
         this.name = name;
     }
 
-    public Exercise getType() {
+    public ExerciseType getType() {
         return type;
     }
 
-    public void setType(Exercise type) {
+    public void setType(ExerciseType type) {
         this.type = type;
     }
 
-    public Double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
-
-    public String getReps() {
-        return reps;
-    }
-
-    public void setReps(String reps) {
-        this.reps = reps;
-    }
-
-    public String getSets() {
+    public List<Set> getSets() {
         return sets;
     }
 
-    public void setSets(String sets) {
+    public void setSets(List<Set> sets) {
         this.sets = sets;
     }
 
@@ -63,17 +50,13 @@ public class Exercise {
         if (object == null || getClass() != object.getClass()) return false;
 
         Exercise exercise = (Exercise) object;
-        return Objects.equals(name, exercise.name) && Objects.equals(type, exercise.type) && Objects.equals(weight, exercise.weight) && Objects.equals(reps, exercise.reps) && Objects.equals(sets, exercise.sets);
+        return Objects.equals(name, exercise.name) && Objects.equals(type, exercise.type)
+                && Objects.equals(sets, exercise.sets);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(name);
-        result = 31 * result + Objects.hashCode(type);
-        result = 31 * result + Objects.hashCode(weight);
-        result = 31 * result + Objects.hashCode(reps);
-        result = 31 * result + Objects.hashCode(sets);
-        return result;
+        return Objects.hash(name, type, sets);
     }
 
     @Override
@@ -81,9 +64,42 @@ public class Exercise {
         return "Exercise{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
-                ", weight=" + weight +
-                ", reps='" + reps + '\'' +
-                ", sets='" + sets + '\'' +
+                ", sets=" + sets +
                 '}';
+    }
+
+    // Вложенный класс Set для хранения данных о подходах
+    public static class Set {
+        private double weight;
+        private String reps;
+
+        public Set(double weight, String reps) {
+            this.weight = weight;
+            this.reps = reps;
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+
+        public void setWeight(double weight) {
+            this.weight = weight;
+        }
+
+        public String getReps() {
+            return reps;
+        }
+
+        public void setReps(String reps) {
+            this.reps = reps;
+        }
+
+        @Override
+        public String toString() {
+            return "Set{" +
+                    "weight=" + weight +
+                    ", reps='" + reps + '\'' +
+                    '}';
+        }
     }
 }
