@@ -20,6 +20,12 @@ public class Exercise {
         sets.add(new Set(weight, reps));
     }
 
+    public double calculateIntensity() {
+        return sets.stream()
+                .mapToDouble(set -> set.getWeight() * Double.parseDouble(set.getReps()))
+                .sum();
+    }
+
     public String getName() {
         return name;
     }

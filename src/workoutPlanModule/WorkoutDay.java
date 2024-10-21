@@ -6,20 +6,30 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class WorkoutDay {
-    private List<Exercise> exercises;
+    private List<Exercise> plannedExercises;   // Запланированные упражнения
+    private List<Exercise> actualExercises;    // Фактически выполненные упражнения
     private LocalDateTime dateTime;
 
-    public WorkoutDay(List<Exercise> exercises, LocalDateTime dateTime) {
-        this.exercises = exercises;
+    public WorkoutDay(List<Exercise> plannedExercises, List<Exercise> actualExercises, LocalDateTime dateTime) {
+        this.plannedExercises = plannedExercises;
+        this.actualExercises = actualExercises;
         this.dateTime = dateTime;
     }
 
-    public List<Exercise> getExercises() {
-        return exercises;
+    public List<Exercise> getPlannedExercises() {
+        return plannedExercises;
     }
 
-    public void setExercises(List<Exercise> exercises) {
-        this.exercises = exercises;
+    public void setPlannedExercises(List<Exercise> plannedExercises) {
+        this.plannedExercises = plannedExercises;
+    }
+
+    public List<Exercise> getActualExercises() {
+        return actualExercises;
+    }
+
+    public void setActualExercises(List<Exercise> actualExercises) {
+        this.actualExercises = actualExercises;
     }
 
     public LocalDateTime getDateTime() {
