@@ -9,11 +9,20 @@ public class WorkoutDay {
     private List<Exercise> plannedExercises;
     private List<Exercise> actualExercises;
     private LocalDateTime dateTime;
+    private Integer id;
 
     public WorkoutDay(List<Exercise> plannedExercises, List<Exercise> actualExercises, LocalDateTime dateTime) {
         this.plannedExercises = plannedExercises;
         this.actualExercises = actualExercises;
         this.dateTime = dateTime;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public List<Exercise> getPlannedExercises() {
@@ -45,6 +54,7 @@ public class WorkoutDay {
         return plannedExercises +
                 ", " + actualExercises +
                 ", " + dateTime +
+                ", " + id +
                 '}';
     }
 }
