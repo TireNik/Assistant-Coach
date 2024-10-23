@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class WorkoutDay {
-    private List<Exercise> plannedExercises;   // Запланированные упражнения
-    private List<Exercise> actualExercises;    // Фактически выполненные упражнения
+    private List<Exercise> plannedExercises;
+    private List<Exercise> actualExercises;
     private LocalDateTime dateTime;
 
     public WorkoutDay(List<Exercise> plannedExercises, List<Exercise> actualExercises, LocalDateTime dateTime) {
@@ -38,5 +38,13 @@ public class WorkoutDay {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    @Override
+    public String toString() {
+        return plannedExercises +
+                ", " + actualExercises +
+                ", " + dateTime +
+                '}';
     }
 }

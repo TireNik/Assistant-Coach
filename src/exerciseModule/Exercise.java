@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Exercise {
     private String name;
     private ExerciseType type;
-    private List<Set> sets;  // Список подходов (вес + повторения)
+    private List<Set> sets;
 
     public Exercise(String name, ExerciseType type) {
         this.name = name;
@@ -15,7 +15,6 @@ public class Exercise {
         this.sets = new ArrayList<>();
     }
 
-    // Добавление подхода в упражнение
     public void addSet(double weight, String reps) {
         sets.add(new Set(weight, reps));
     }
@@ -74,7 +73,6 @@ public class Exercise {
                 '}';
     }
 
-    // Вложенный класс Set для хранения данных о подходах
     public static class Set {
         private double weight;
         private String reps;
@@ -102,9 +100,8 @@ public class Exercise {
 
         @Override
         public String toString() {
-            return "Set{" +
-                    "weight=" + weight +
-                    ", reps='" + reps + '\'' +
+            return weight +
+                    ", " + reps + '\'' +
                     '}';
         }
     }

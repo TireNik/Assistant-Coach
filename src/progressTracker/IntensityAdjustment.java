@@ -7,107 +7,92 @@ import java.util.List;
 
 public class IntensityAdjustment {
 
-    // Главный метод, который вызывает другие, и обновляет план
     public WorkoutDay recommend(WorkoutDay workoutDay) {
-        List<Exercise> actualExercises = workoutDay.getActualExercises();  // Используем фактически выполненные упражнения
+        List<Exercise> plannedExercises = workoutDay.getPlannedExercises();
+        List<Exercise> actualExercises = workoutDay.getActualExercises();
 
-        for (Exercise exercise : actualExercises) {
-            List<Exercise.Set> sets = exercise.getSets();
+        for (int i = 0; i < plannedExercises.size(); i++) {
+            Exercise plannedExercise = plannedExercises.get(i);
+            Exercise actualExercise = actualExercises.get(i);
 
-            // Собираем информацию о подходах
-            AdjustmentData data = gatherSetData(sets);
+            List<Exercise.Set> plannedSets = plannedExercise.getSets();
+            List<Exercise.Set> actualSets = actualExercise.getSets();
 
-            // Решаем, увеличивать ли вес, уменьшать или оставлять
-            if (shouldDecreaseWeight(data)) {
-                adjustWeight(sets, -10);  // Уменьшаем вес на 10%
-            } else if (shouldIncreaseWeight(data)) {
-                adjustWeight(sets, 10);   // Увеличиваем вес на 10%
-            } else {
-                adjustReps(sets, data);   // Не меняем вес, но корректируем повторения
+            boolean allSetsEqual = gatherSetData(plannedSets, actualSets);
+            boolean allRepsAre10 = allRepsAre10(actualSets);
+
+            if (allRepsAre10) {
+                adjustWeight(plannedSets, 10);
+                setRepsTo(plannedSets, 8);
+            } else if (allSetsEqual) {
+                increaseRepsBy1(plannedSets);
+            } else if (!allSetsEqual) {
+                setMediumReps(plannedSets, actualSets);
             }
         }
 
-        // Возвращаем обновленный тренировочный день
-        workoutDay.setActualExercises(actualExercises);
+        workoutDay.setPlannedExercises(plannedExercises);
         return workoutDay;
     }
 
-    // Метод для сбора данных о подходах
-    private AdjustmentData gatherSetData(List<Exercise.Set> sets) {
-        int totalReps = 0;
-        int minReps = Integer.MAX_VALUE;
-        boolean decreaseWeight = false;
-        boolean increaseWeight = true;
+    private void setMediumReps(List<Exercise.Set> plannedSets, List<Exercise.Set> actualSets) {
+        int plannedReps = 0;
+        int actualReps = 0;
 
-        for (Exercise.Set set : sets) {
-            int reps = Integer.parseInt(set.getReps());
-            totalReps += reps;
-            if (reps < 6) {
-                decreaseWeight = true;
-            }
-            if (reps < 10) {
-                increaseWeight = false;
-            }
-            minReps = Math.min(minReps, reps);
+        for (Exercise.Set set : plannedSets) {
+            plannedReps = plannedReps + Integer.parseInt(set.getReps());
+        }
+        for (Exercise.Set set : actualSets) {
+            actualReps = actualReps + Integer.parseInt(set.getReps());
         }
 
-        double averageReps = (double) totalReps / sets.size();
-        return new AdjustmentData(decreaseWeight, increaseWeight, minReps, Math.ceil(averageReps));
+        if(actualReps < plannedReps) {
+            actualReps = actualReps / plannedSets.size();
+            for (Exercise.Set set : plannedSets) {
+                set.setReps(String.valueOf(actualReps));
+            }
+        }
+    }
+    private void increaseRepsBy1(List<Exercise.Set> sets) {
+        for (Exercise.Set set : sets) {
+            int reps = Integer.parseInt(set.getReps());
+            if (reps < 10) {
+                set.setReps(String.valueOf(reps + 1));
+            }
+        }
     }
 
-    // Проверяем, нужно ли уменьшить вес
-    private boolean shouldDecreaseWeight(AdjustmentData data) {
-        return data.isDecreaseWeight();
+    private void setRepsTo(List<Exercise.Set> sets, int targetReps) {
+        for (Exercise.Set set : sets) {
+            set.setReps(String.valueOf(targetReps));
+        }
     }
 
-    // Проверяем, нужно ли увеличить вес
-    private boolean shouldIncreaseWeight(AdjustmentData data) {
-        return data.isIncreaseWeight();
-    }
-
-    // Увеличиваем или уменьшаем вес
     private void adjustWeight(List<Exercise.Set> sets, double percentage) {
         for (Exercise.Set set : sets) {
             set.setWeight(set.getWeight() * (1 + percentage / 100));
         }
     }
 
-    // Корректируем повторения на следующую тренировку
-    private void adjustReps(List<Exercise.Set> sets, AdjustmentData data) {
-        int roundedAverageReps = (int) data.getAverageReps(); // Округляем вверх до целого числа
-        for (Exercise.Set set : sets) {
-            set.setReps(String.valueOf(roundedAverageReps));
+    private boolean allRepsAre10(List<Exercise.Set> actualSets) {
+        for (Exercise.Set set : actualSets) {
+            int actualReps = Integer.parseInt(set.getReps());
+            if (actualReps < 10) {
+                return false;
+            }
         }
+        return true;
     }
 
-    // Вспомогательный класс для хранения данных о подходах
-    private static class AdjustmentData {
-        private final boolean decreaseWeight;
-        private final boolean increaseWeight;
-        private final int minReps;
-        private final double averageReps;
+    private boolean gatherSetData(List<Exercise.Set> plannedSets, List<Exercise.Set> actualSets) {
+        for (int i = 0; i < plannedSets.size(); i++) {
+            int plannedReps = Integer.parseInt(plannedSets.get(i).getReps());
+            int actualReps = Integer.parseInt(actualSets.get(i).getReps());
 
-        public AdjustmentData(boolean decreaseWeight, boolean increaseWeight, int minReps, double averageReps) {
-            this.decreaseWeight = decreaseWeight;
-            this.increaseWeight = increaseWeight;
-            this.minReps = minReps;
-            this.averageReps = averageReps;
+            if (actualReps < plannedReps) {
+                return false;
+            }
         }
-
-        public boolean isDecreaseWeight() {
-            return decreaseWeight;
-        }
-
-        public boolean isIncreaseWeight() {
-            return increaseWeight;
-        }
-
-        public int getMinReps() {
-            return minReps;
-        }
-
-        public double getAverageReps() {
-            return averageReps;
-        }
+        return true;
     }
 }
